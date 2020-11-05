@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
-using WebApi.Entities;
+using WebApi.DataAccess;
 using WebApi.Helpers;
 using WebApi.Services;
 

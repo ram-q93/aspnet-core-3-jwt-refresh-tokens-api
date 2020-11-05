@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using WebApi.Entities;
+using WebApi.DataAccess;
 
 namespace WebApi.Models
 {

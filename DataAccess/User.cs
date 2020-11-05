@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
 
-namespace WebApi.Entities
+namespace WebApi.DataAccess
 {
     public class User
     {

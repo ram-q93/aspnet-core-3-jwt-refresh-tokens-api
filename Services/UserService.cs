@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using WebApi.Entities;
+using WebApi.DataAccess;
 using WebApi.Helpers;
 using WebApi.Models;
 
@@ -38,8 +38,6 @@ namespace WebApi.Services
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
             var user = _context.Users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
-
-            // return null if user not found
             if (user == null) return null;
 
             // authentication successful so generate jwt and refresh tokens
@@ -57,13 +55,9 @@ namespace WebApi.Services
         public AuthenticateResponse RefreshToken(string token, string ipAddress)
         {
             var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
-
-            // return null if no user found with token
             if (user == null) return null;
 
             var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
-
-            // return null if token is no longer active
             if (!refreshToken.IsActive) return null;
 
             // replace old refresh token with a new one and save
@@ -77,7 +71,6 @@ namespace WebApi.Services
 
             // generate new jwt
             var jwtToken = generateJwtToken(user);
-
             return new AuthenticateResponse(user, jwtToken, newRefreshToken.Token);
         }
 
@@ -119,7 +112,7 @@ namespace WebApi.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]{new Claim(ClaimTypes.Name, user.Id.ToString())}),
+                Subject = new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, user.Id.ToString()) }),
                 Expires = DateTime.UtcNow.AddMinutes(_appSettings.TokenExpiresInMinutes),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.Secret)),
