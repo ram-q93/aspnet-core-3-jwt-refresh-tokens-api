@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -79,7 +80,9 @@ namespace WebApi.Services
 
         public bool RevokeToken(string token, string ipAddress)
         {
-            var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+            var user = _context.Users
+                .Include(u => u.RefreshTokens)
+                .SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
             if (user == null)
             {
                 return false;
