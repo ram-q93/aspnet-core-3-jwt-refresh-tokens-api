@@ -60,17 +60,17 @@ namespace WebApi.Controllers
         {
             //To revoke a refresh token so it can no longer be used to generate JWT tokens
             // accept token from request body or cookie
-            var token = model.Token ?? Request.Cookies["refreshToken"];
-
+            var token = model.RefreshToken ?? Request.Cookies["refreshToken"];
             if (string.IsNullOrEmpty(token))
-                return BadRequest(new { message = "Token is required" });
-
+            {
+                return BadRequest(new { message = "Refresh Token is required" });
+            }
             var response = _userService.RevokeToken(token, getIpAddress());
-
             if (!response)
-                return NotFound(new { message = "Token not found" });
-
-            return Ok(new { message = "Token revoked" });
+            {
+                return NotFound(new { message = "Refresh Token not found" });
+            }
+            return Ok(new { message = "Refresh Token revoked" });
         }
 
 
@@ -102,7 +102,7 @@ namespace WebApi.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = DateTime.UtcNow.AddMinutes(_appSettings.RefreshTokenExpiresInMinutes)
+                Expires = DateTime.Now.AddMinutes(_appSettings.RefreshTokenExpiresInMinutes)
             };
             Response.Cookies.Append("refreshToken", token, cookieOptions);
         }

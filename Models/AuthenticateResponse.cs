@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 using WebApi.DataAccess;
 
@@ -5,7 +6,7 @@ namespace WebApi.Models
 {
     public class AuthenticateResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
